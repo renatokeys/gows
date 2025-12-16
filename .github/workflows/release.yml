@@ -100,6 +100,9 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout gows
+        uses: actions/checkout@v4
+
       - name: Download amd64 artifact
         uses: actions/download-artifact@v4
         with:
@@ -118,4 +121,5 @@ jobs:
           files: |
             bin/gows-amd64
             bin/gows-arm64
+            proto/gows.proto
           generate_release_notes: true
