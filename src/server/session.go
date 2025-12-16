@@ -85,6 +85,7 @@ func (s *Server) RequestCode(ctx context.Context, req *__.PairCodeRequest) (*__.
 		return nil, err
 	}
 	code, err := cli.PairPhone(
+		ctx,
 		req.GetPhone(),
 		true,
 		whatsmeow.PairClientChrome,

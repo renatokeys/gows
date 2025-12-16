@@ -117,7 +117,7 @@ func (s *Server) NewsletterToggleMute(ctx context.Context, req *__.NewsletterTog
 	if !gows.IsNewsletter(jid) {
 		return nil, errors.New("invalid jid, not a newsletter")
 	}
-	err = cli.NewsletterToggleMute(jid, req.GetMute())
+	err = cli.NewsletterToggleMute(ctx, jid, req.GetMute())
 	if err != nil {
 		return nil, err
 	}
@@ -138,9 +138,9 @@ func (s *Server) NewsletterToggleFollow(ctx context.Context, req *__.NewsletterT
 		return nil, errors.New("invalid jid, not a newsletter")
 	}
 	if req.Follow {
-		err = cli.FollowNewsletter(jid)
+		err = cli.FollowNewsletter(ctx, jid)
 	} else {
-		err = cli.UnfollowNewsletter(jid)
+		err = cli.UnfollowNewsletter(ctx, jid)
 	}
 	if err != nil {
 		return nil, err
