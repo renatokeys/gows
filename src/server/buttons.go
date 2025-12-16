@@ -32,7 +32,7 @@ func buttonTypeName(t __.ButtonType) string {
 	}
 }
 
-func buttonToNativeFlowButton(button *__.Button) *waE2E.NativeFlowMessage_NativeFlowButton {
+func buttonToNativeFlowButton(button *__.Button) *waE2E.InteractiveMessage_NativeFlowMessage_NativeFlowButton {
 	buttonParams := map[string]interface{}{
 		"display_text": button.Text,
 		"id":           button.Id,
@@ -54,10 +54,12 @@ func buttonToNativeFlowButton(button *__.Button) *waE2E.NativeFlowMessage_Native
 	}
 
 	paramsJson, _ := json.Marshal(buttonParams)
+	name := buttonTypeName(button.Type)
+	paramsStr := string(paramsJson)
 
-	return &waE2E.NativeFlowMessage_NativeFlowButton{
-		Name:             proto.String(buttonTypeName(button.Type)),
-		ButtonParamsJSON: proto.String(string(paramsJson)),
+	return &waE2E.InteractiveMessage_NativeFlowMessage_NativeFlowButton{
+		Name:             &name,
+		ButtonParamsJSON: &paramsStr,
 	}
 }
 
@@ -73,7 +75,7 @@ func (s *Server) SendButtons(ctx context.Context, req *__.SendButtonsRequest) (*
 	}
 
 	// Build buttons
-	buttons := make([]*waE2E.NativeFlowMessage_NativeFlowButton, len(req.Buttons))
+	buttons := make([]*waE2E.InteractiveMessage_NativeFlowMessage_NativeFlowButton, len(req.Buttons))
 	for i, btn := range req.Buttons {
 		buttons[i] = buttonToNativeFlowButton(btn)
 	}
@@ -82,20 +84,27 @@ func (s *Server) SendButtons(ctx context.Context, req *__.SendButtonsRequest) (*
 		"from":       "api",
 		"templateId": randomId(),
 	})
+	messageParamsStr := string(messageParamsJson)
+
+	// Build native flow message
+	nativeFlowMessage := &waE2E.InteractiveMessage_NativeFlowMessage{
+		Buttons:           buttons,
+		MessageParamsJSON: &messageParamsStr,
+	}
 
 	// Build interactive message
 	interactiveMessage := &waE2E.InteractiveMessage{
-		NativeFlowMessage: &waE2E.NativeFlowMessage{
-			Buttons:           buttons,
-			MessageParamsJSON: proto.String(string(messageParamsJson)),
+		InteractiveMessage: &waE2E.InteractiveMessage_NativeFlowMessage_{
+			NativeFlowMessage: nativeFlowMessage,
 		},
 	}
 
 	// Add header if present
 	if req.Header != "" || len(req.HeaderImage) > 0 {
+		hasMedia := len(req.HeaderImage) > 0
 		interactiveMessage.Header = &waE2E.InteractiveMessage_Header{
 			Title:              proto.String(req.Header),
-			HasMediaAttachment: proto.Bool(len(req.HeaderImage) > 0),
+			HasMediaAttachment: &hasMedia,
 		}
 
 		// Upload header image if present
