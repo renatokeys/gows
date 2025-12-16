@@ -101,7 +101,7 @@ func (s *Server) Logout(ctx context.Context, req *__.Session) (*__.Empty, error)
 	if err != nil {
 		return nil, err
 	}
-	err = cli.Logout()
+	err = cli.Logout(ctx)
 	if err != nil {
 		if errors.Is(err, whatsmeow.ErrNotLoggedIn) {
 			// Ignore not logged in error

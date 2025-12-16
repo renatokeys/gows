@@ -44,7 +44,7 @@ func (s *Server) GetSubscribedNewsletters(ctx context.Context, req *__.Newslette
 	if err != nil {
 		return nil, err
 	}
-	resp, err := cli.GetSubscribedNewsletters()
+	resp, err := cli.GetSubscribedNewsletters(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -74,13 +74,13 @@ func (s *Server) GetNewsletterInfo(ctx context.Context, req *__.NewsletterInfoRe
 		if err != nil {
 			return nil, err
 		}
-		resp, err := cli.GetNewsletterInfo(jid)
+		resp, err := cli.GetNewsletterInfo(ctx, jid)
 		if err != nil {
 			return nil, err
 		}
 		return toNewsletter(resp), nil
 	}
-	resp, err := cli.GetNewsletterInfoWithInvite(id)
+	resp, err := cli.GetNewsletterInfoWithInvite(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (s *Server) CreateNewsletter(ctx context.Context, req *__.CreateNewsletterR
 		Description: req.GetDescription(),
 		Picture:     req.GetPicture(),
 	}
-	resp, err := cli.CreateNewsletter(params)
+	resp, err := cli.CreateNewsletter(ctx, params)
 	if err != nil {
 		return nil, err
 	}
