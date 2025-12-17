@@ -140,13 +140,9 @@ func (s *Server) SendButtons(ctx context.Context, req *__.SendButtonsRequest) (*
 		}
 	}
 
-	// Wrap in viewOnceMessage
+	// Send InteractiveMessage directly (no ViewOnceMessage wrapper)
 	message := &waE2E.Message{
-		ViewOnceMessage: &waE2E.FutureProofMessage{
-			Message: &waE2E.Message{
-				InteractiveMessage: interactiveMessage,
-			},
-		},
+		InteractiveMessage: interactiveMessage,
 	}
 
 	res, err := cli.SendMessage(ctx, jid, message)
